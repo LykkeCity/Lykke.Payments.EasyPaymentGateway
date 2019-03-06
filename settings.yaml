@@ -1,0 +1,18 @@
+EasyPaymentGatewayService:
+    Db:
+        LogsConnString:
+            settings-key: EasyPaymentGatewayService-LogsConnString
+            types:
+              - AzureTableStorage
+SlackNotifications:
+    AzureQueue:
+        ConnectionString:
+            settings-key: SlackNotificationsConnString
+            types:
+                - AzureTableStorage
+        QueueName:
+            settings-key: SlackQueueName
+MonitoringServiceClient:
+    MonitoringServiceUrl:
+        settings-key: MonitoringServiceUrl
+
