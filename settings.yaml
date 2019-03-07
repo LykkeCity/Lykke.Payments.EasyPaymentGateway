@@ -30,4 +30,3 @@ PersonalDataServiceClient:
         settings-key: PersonalDataApiKey
     ServiceUri:
         settings-key: PersonalDataServiceUrl
-
