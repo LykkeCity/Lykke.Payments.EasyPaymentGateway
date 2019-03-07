@@ -8,11 +8,11 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EpgController : ControllerBase
+    public class PaymentsController : ControllerBase
     {
         [HttpPost]
         [Route("GetPaymentUrl")]
-        public async Task<GetUrlDataResult> GetPaymentUrl([FromBody] GetUrlDataRequestModel request)
+        public async Task<GetUrlDataResult> GetUrl([FromBody] GetUrlDataRequestModel request)
         {
             throw new NotImplementedException();
         }

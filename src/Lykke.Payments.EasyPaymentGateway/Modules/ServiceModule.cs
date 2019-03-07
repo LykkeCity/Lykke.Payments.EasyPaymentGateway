@@ -1,5 +1,8 @@
 ﻿using Autofac;
+using Lykke.Common.Log;
 using Lykke.Payments.EasyPaymentGateway.Settings;
+using Lykke.Service.PersonalData.Client;
+using Lykke.Service.PersonalData.Contract;
 using Lykke.SettingsReader;
 
 namespace Lykke.Payments.EasyPaymentGateway.Modules
@@ -15,7 +18,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            // Do not register entire settings in container, pass necessary settings to services which requires them
+            builder.Register(ctx => new PersonalDataService(_appSettings.CurrentValue.PersonalDataServiceClient, ctx.Resolve<ILogFactory>()))
+                .As<IPersonalDataService>().SingleInstance();
         }
     }
 }

@@ -25,4 +25,9 @@ SlackNotifications:
 MonitoringServiceClient:
     MonitoringServiceUrl:
         settings-key: MonitoringServiceUrl
+PersonalDataServiceClient:
+    ApiKey: 
+        settings-key: PersonalDataApiKey
+    ServiceUri:
+        settings-key: PersonalDataServiceUrl
 

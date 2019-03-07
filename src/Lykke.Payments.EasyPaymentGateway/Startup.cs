@@ -12,7 +12,7 @@ namespace Lykke.Payments.EasyPaymentGateway
     {
         private readonly LykkeSwaggerOptions _swaggerOptions = new LykkeSwaggerOptions
         {
-            ApiTitle = "EasyPaymentGateway API",
+            ApiTitle = "EasyPaymentGateway Integration API",
             ApiVersion = "v1"
         };
 
