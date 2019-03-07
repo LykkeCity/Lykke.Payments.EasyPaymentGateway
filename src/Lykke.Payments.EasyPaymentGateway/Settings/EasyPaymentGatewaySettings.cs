@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Lykke.SettingsReader.Attributes;
 
 namespace Lykke.Payments.EasyPaymentGateway.Settings
 {
@@ -7,5 +6,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Settings
     public class EasyPaymentGatewaySettings
     {
         public DbSettings Db { get; set; }
+        public MerchantSettings Merchant { get; set; }
     }
 }

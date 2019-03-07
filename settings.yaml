@@ -4,6 +4,16 @@ EasyPaymentGatewayService:
             settings-key: EasyPaymentGatewayService-LogsConnString
             types:
               - AzureTableStorage
+    Merchant:
+        MerchantId:
+            settings-key: EasyPaymentGatewayService-MerchantId
+            types: [Tag]
+        MerchantPassword:
+            settings-key: EasyPaymentGatewayService-MerchantPassword
+            types: [Tag]
+        ProductId:
+            settings-key: EasyPaymentGatewayService-ProductId
+            types: [Tag]
 SlackNotifications:
     AzureQueue:
         ConnectionString:
