@@ -8,7 +8,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Settings
     public class AppSettings : BaseAppSettings
     {
         public EasyPaymentGatewaySettings EasyPaymentGatewayService { get; set; }
-
         public PersonalDataServiceClientSettings PersonalDataServiceClient { get; set; }
     }
 }

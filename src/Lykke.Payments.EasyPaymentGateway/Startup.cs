@@ -41,16 +41,13 @@ namespace Lykke.Payments.EasyPaymentGateway
                     */
                 };
 
-                // TODO: Extend the service configuration
-                /*
                 options.Extend = (sc, settings) =>
                 {
-                    sc
-                        .AddOptions()
-                        .AddAuthentication(MyAuthOptions.AuthenticationScheme)
-                        .AddScheme<MyAuthOptions, KeyAuthHandler>(MyAuthOptions.AuthenticationScheme, null);
+                    sc.AddHttpClient("epg", client =>
+                    {
+                        client.BaseAddress = new Uri(settings.CurrentValue.EasyPaymentGatewayService.EpgProvider.CheckoutUrl);
+                    });
                 };
-                */
 
                 // TODO: You could add extended Swagger configuration here:
                 /*

@@ -4,7 +4,8 @@
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.AzureStorage" Version="8.11.0" />
+    <PackageReference Include="Lykke.AzureStorage" Version="8.13.4" />
+    <PackageReference Include="Lykke.Contracts" Version="1.0.52" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Payments.EasyPaymentGateway.Domain\Lykke.Payments.EasyPaymentGateway.Domain.csproj" />

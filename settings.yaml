@@ -14,6 +14,24 @@ EasyPaymentGatewayService:
         ProductId:
             settings-key: EasyPaymentGatewayService-ProductId
             types: [Tag]
+    EpgProvider:
+        CheckoutUrl:
+            settings-key: EasyPaymentGatewayService-CheckoutUrl
+            types: [Tag]
+    WebHook:
+        StatusUrl:
+            settings-key: EasyPaymentGatewayService-WebHookStatusUrl
+            types: [Tag]
+    Redirect:
+        OkUrl:
+            settings-key: EasyPaymentGatewayService-OkUrl
+            types: [Tag]
+        ErrorUrl:
+            settings-key: EasyPaymentGatewayService-ErrorUrl
+            types: [Tag]
+        CancelUrl:
+            settings-key: EasyPaymentGatewayService-CancelUrl
+            types: [Tag]
 SlackNotifications:
     AzureQueue:
         ConnectionString:
