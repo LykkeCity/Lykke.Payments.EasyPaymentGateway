@@ -1,4 +1,6 @@
 ﻿using Common;
+using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Contracts.Payments;
 using Lykke.Payments.Contracts;
 using Lykke.Payments.EasyPaymentGateway.AzureRepositories;
@@ -18,21 +20,26 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
         private readonly PaymentUrlProvider _paymentUrlProvider;
         private readonly IPaymentSystemsRawLog _paymentSystemsRawLog;
         private readonly RedirectSettings _redirectSettings;
+        private readonly ILog _log; 
 
         public PaymentsController(
             PaymentUrlProvider paymentUrlProvider, 
             IPaymentSystemsRawLog paymentSystemsRawLog,
-            RedirectSettings redirectSettings)
+            RedirectSettings redirectSettings,
+            ILogFactory logFactory)
         {
             _paymentUrlProvider = paymentUrlProvider;
             _paymentSystemsRawLog = paymentSystemsRawLog;
             _redirectSettings = redirectSettings;
+            _log = logFactory.CreateLog(this);
         }
 
         [HttpPost]
         [Route("api/GetPaymentUrl")]
         public async Task<GetUrlDataResult> GetPaymentUrl([FromBody] GetUrlDataRequestModel request)
         {
+            _log.Warning("Test log", "Incoming request for payment form url");
+
             if (request == null)
                 return new GetUrlDataResult { ErrorMessage = "Invalid request data" };
 
