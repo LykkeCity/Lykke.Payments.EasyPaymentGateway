@@ -20,17 +20,20 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
         private readonly PaymentUrlProvider _paymentUrlProvider;
         private readonly IPaymentSystemsRawLog _paymentSystemsRawLog;
         private readonly RedirectSettings _redirectSettings;
+        private readonly EasyPaymentGatewaySettings _easyPaymentGatewaySettings;
         private readonly ILog _log; 
 
         public PaymentsController(
             PaymentUrlProvider paymentUrlProvider, 
             IPaymentSystemsRawLog paymentSystemsRawLog,
             RedirectSettings redirectSettings,
+            EasyPaymentGatewaySettings easyPaymentGatewaySettings,
             ILogFactory logFactory)
         {
             _paymentUrlProvider = paymentUrlProvider;
             _paymentSystemsRawLog = paymentSystemsRawLog;
             _redirectSettings = redirectSettings;
+            _easyPaymentGatewaySettings = easyPaymentGatewaySettings;
             _log = logFactory.CreateLog(this);
         }
 
@@ -86,5 +89,10 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
 
             return result;
         }
+
+        [HttpGet]
+        [Route("api/GetSourceClientId")]
+        [Produces("text/plain")]
+        public Task<string> GetSourceClientId() => Task.FromResult(_easyPaymentGatewaySettings.SourceClientId);
     }
 }
