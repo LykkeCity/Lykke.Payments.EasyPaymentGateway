@@ -32,6 +32,9 @@ EasyPaymentGatewayService:
         CancelUrl:
             settings-key: EasyPaymentGatewayService-CancelUrl
             types: [Tag]
+    SourceClientId:
+        settings-key: EasyPaymentGatewayService-SourceClientId
+        types: [Tag]
 SlackNotifications:
     AzureQueue:
         ConnectionString:
