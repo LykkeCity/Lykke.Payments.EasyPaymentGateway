@@ -10,5 +10,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Settings
         public EpgProviderSettings EpgProvider { get; set; }
         public WebHookSettings WebHook { get; set; }
         public RedirectSettings Redirect { get; set; }
+        public string SourceClientId { get; set; }
     }
 }

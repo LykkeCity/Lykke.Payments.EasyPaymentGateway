@@ -41,6 +41,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Modules
             ).As<IPaymentSystemsRawLog>().SingleInstance();
 
             builder.RegisterInstance(serviceSettings.Redirect);
+
+            builder.RegisterInstance(serviceSettings);
         }
     }
 }
