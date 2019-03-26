@@ -41,6 +41,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
         [Route("api/GetPaymentUrl")]
         public async Task<GetUrlDataResult> GetPaymentUrl([FromBody] GetUrlDataRequestModel request)
         {
+            await _log.WriteInfoAsync(nameof(PaymentsController.GetPaymentUrl), request.ToJson(), "Diagnostic logging");
+
             _log.Warning("Test log", "Incoming request for payment form url");
 
             if (request == null)
