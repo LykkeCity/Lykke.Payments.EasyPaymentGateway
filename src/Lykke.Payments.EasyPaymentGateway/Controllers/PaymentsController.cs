@@ -92,8 +92,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
                     PaymentUrl = url,
                     OkUrl = _redirectSettings.OkUrl,
                     FailUrl = _redirectSettings.ErrorUrl,
-                    ReloadRegexp = string.Empty,
-                    UrlsRegexp = string.Empty
+                    ReloadRegexp = "^$",
+                    UrlsRegexp = "^$"
                 };
             }
             catch (AggregateException exc)
