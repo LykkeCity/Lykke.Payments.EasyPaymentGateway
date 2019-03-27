@@ -86,14 +86,14 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
                     request.ClientId);
 
                 var otherPaymentInfo = request.OtherInfo.DeserializeJson<OtherPaymentInfo>();
-                var neverMatchUrlRegex = "^$";
+
                 result = new GetUrlDataResult
                 {
                     PaymentUrl = url,
                     OkUrl = _redirectSettings.OkUrl,
                     FailUrl = _redirectSettings.ErrorUrl,
-                    ReloadRegexp = neverMatchUrlRegex,
-                    UrlsRegexp = neverMatchUrlRegex
+                    ReloadRegexp = string.Empty,
+                    UrlsRegexp = string.Empty
                 };
             }
             catch (AggregateException exc)
