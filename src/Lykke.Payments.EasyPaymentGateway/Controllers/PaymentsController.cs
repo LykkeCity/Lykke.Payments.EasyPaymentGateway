@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace Lykke.Payments.EasyPaymentGateway.Controllers
 {
     [ApiController]
-    public class PaymentsController : ControllerBase
+    public class PaymentsController : Controller
     {
         private readonly PaymentUrlProvider _paymentUrlProvider;
         private readonly IPaymentSystemsRawLog _paymentSystemsRawLog;
@@ -35,6 +35,28 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
             _redirectSettings = redirectSettings;
             _easyPaymentGatewaySettings = easyPaymentGatewaySettings;
             _log = logFactory.CreateLog(this);
+        }
+
+        [HttpGet]
+        [HttpPost]
+        [Route("easypaymentgateway/ok")]
+        public async Task<ActionResult> Ok()
+        {
+            await _paymentSystemsRawLog.RegisterEventAsync(
+                PaymentSystemRawLogEvent.Create(CashInPaymentSystem.EasyPaymentGateway, "Ok page", Request.QueryString.ToString()));
+
+            return View();
+        }
+
+        [HttpGet]
+        [HttpPost]
+        [Route("easypaymentgateway/fail")]
+        public async Task<ActionResult> Fail()
+        {
+            await _paymentSystemsRawLog.RegisterEventAsync(
+                PaymentSystemRawLogEvent.Create(CashInPaymentSystem.EasyPaymentGateway, "Fail page", Request.QueryString.ToString()));
+
+            return View();
         }
 
         [HttpPost]
@@ -68,8 +90,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
                 result = new GetUrlDataResult
                 {
                     PaymentUrl = url,
-                    OkUrl = otherPaymentInfo.OkUrl ?? _redirectSettings.OkUrl,
-                    FailUrl = otherPaymentInfo.FailUrl ?? _redirectSettings.ErrorUrl,
+                    OkUrl = _redirectSettings.OkUrl,
+                    FailUrl = _redirectSettings.ErrorUrl,
                     ReloadRegexp = neverMatchUrlRegex,
                     UrlsRegexp = neverMatchUrlRegex
                 };
