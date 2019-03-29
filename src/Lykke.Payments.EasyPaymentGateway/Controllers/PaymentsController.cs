@@ -13,8 +13,8 @@ using Lykke.Payments.EasyPaymentGateway.Workflow.Commands;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Lykke.Payments.EasyPaymentGateway.Sdk;
 using Lykke.Cqrs;
+using System.Linq;
 
 namespace Lykke.Payments.EasyPaymentGateway.Controllers
 {
@@ -141,16 +141,21 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
                 "Status update", 
                 request));
 
-            var command = new CashInCommand
-            {
-                OrderId = model.Operations.GetMerchantTransactionId(),
-                Request = request
-            };
+            var transactions = model.Operations.Select(x => x.MerchantTransactionId).Distinct();
 
-            _cqrsEngine.SendCommand(
-                command, 
-                _easyPaymentGatewaySettings.EasyPaymentGatewayContext, 
-                _easyPaymentGatewaySettings.EasyPaymentGatewayContext);
+            foreach (var trxId in transactions)
+            {
+                var command = new CashInCommand
+                {
+                    OrderId = trxId,
+                    Request = request
+                };
+
+                _cqrsEngine.SendCommand(
+                    command,
+                    _easyPaymentGatewaySettings.EasyPaymentGatewayContext,
+                    _easyPaymentGatewaySettings.EasyPaymentGatewayContext);
+            }
 
             return Accepted();
         }

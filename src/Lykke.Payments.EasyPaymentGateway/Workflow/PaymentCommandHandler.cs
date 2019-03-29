@@ -3,10 +3,10 @@ using Lykke.Cqrs;
 using Lykke.Payments.EasyPaymentGateway.AzureRepositories;
 using Lykke.Payments.EasyPaymentGateway.Domain.Repositories;
 using Lykke.Payments.EasyPaymentGateway.Models;
-using Lykke.Payments.EasyPaymentGateway.Sdk;
 using Lykke.Payments.EasyPaymentGateway.Workflow.Commands;
 using Lykke.Payments.EasyPaymentGateway.Workflow.Events;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lykke.Payments.EasyPaymentGateway.Workflow
@@ -28,7 +28,9 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
         {
             var request = JsonConvert.DeserializeObject<CallbackStatusModel>(command.Request);
 
-            var operation = request.Operations.GetSingleOperation();
+            var transactionOperations = request?.Operations.Where(x => x.MerchantTransactionId == command.OrderId);
+
+            var operationPaymentDetails = transactionOperations.First().PaymentDetails;
 
             var tx = await _paymentTransactionsRepository.GetByTransactionIdAsync(command.OrderId);
 
@@ -37,9 +39,9 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
                 return CommandHandlingResult.Ok();
             }
 
-            if (operation.PaymentDetails != null)
+            if (operationPaymentDetails != null)
             {
-                await _paymentTransactionsRepository.SaveCardHashAsync(command.OrderId, operation.PaymentDetails.CardNumberToken);
+                await _paymentTransactionsRepository.SaveCardHashAsync(command.OrderId, operationPaymentDetails.CardNumberToken);
 
                 if (tx != null)
                 {
@@ -47,16 +49,20 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
                     {
                         ClientId = tx.ClientId,
                         OrderId = command.OrderId,
-                        CardHash = operation.PaymentDetails.CardNumberToken,
-                        CardNumber = operation.PaymentDetails.CardNumber,
-                        CustomerName = operation.PaymentDetails.CardHolderName
+                        CardHash = operationPaymentDetails.CardNumberToken,
+                        CardNumber = operationPaymentDetails.CardNumber,
+                        CustomerName = operationPaymentDetails.CardHolderName
                     });
                 }
             }
 
-            if (operation.Succeeded)
+            if (transactionOperations.Any(x => x.Succeeded))
             {
-                tx = await _paymentTransactionsRepository.StartProcessingTransactionAsync(command.OrderId, operation.PayFrexTransactionId);
+                var succeededOperations = transactionOperations.Where(x => x.Succeeded);
+
+                var providerTransactionId = succeededOperations.Select(x => x.PayFrexTransactionId).Distinct().Single();
+
+                tx = await _paymentTransactionsRepository.StartProcessingTransactionAsync(command.OrderId, providerTransactionId);
                 if (tx != null) // initial status
                 {
                     eventPublisher.PublishEvent(new ProcessingStartedEvent
@@ -69,11 +75,13 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
             }
             else
             {
+                var statuses = transactionOperations.Select(x => x.Status).Distinct();
+
                 await _paymentTransactionsRepository.SetStatusAsync(command.OrderId, PaymentStatus.NotifyDeclined);
 
                 await _paymentTransactionEventsLog.WriteAsync(
                     PaymentTransactionLogEvent.Create(
-                        command.OrderId, command.Request, $"Declined by Payment status from payment system, status = {operation.Status}", nameof(CashInCommand)));
+                        command.OrderId, command.Request, $"Declined by Payment status from payment system, operation statuses = [{string.Join(',', statuses)}]", nameof(CashInCommand)));
 
                 return CommandHandlingResult.Ok();
             }
