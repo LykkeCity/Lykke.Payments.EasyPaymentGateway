@@ -1,4 +1,6 @@
 ﻿using Common;
+using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Contracts.Payments;
 using Lykke.Payments.EasyPaymentGateway.DomainServices.Sdk;
 using System;
@@ -16,6 +18,7 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
         private readonly string _productId;
         private readonly string _webHookStatusUrl;
         private readonly HttpClient _httpClient;
+        private readonly ILog _log;
 
         #region consts
         private const string Language = "EN";
@@ -27,13 +30,15 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
             string merchantPassword,
             string productId,
             string webHookStatusUrl,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            ILogFactory logFactory)
         {
             _merchantId = merchantId;
             _merchantPassword = merchantPassword;
             _productId = productId;
             _webHookStatusUrl = webHookStatusUrl;
             _httpClient = httpClientFactory.CreateClient("epg");
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<string> GetPaymentUrlAsync(string orderId, string clientId, double amount, string assetId, string otherInfoJson, string operationType = "debit")
@@ -98,13 +103,19 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
                 MerchantId = _merchantId
             };
 
+            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), request.ToJson(), "EPG payment form request");
+
             var response = await _httpClient.PostAsync
                 ("/EPGCheckout/rest/online/tokenize",
                 new StringContent(request.BuildEncodedQueryString(), Encoding.UTF8, "application/x-www-form-urlencoded"));
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStringAsync();
+            var result = await response.Content.ReadAsStringAsync();
+
+            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), $"paymentFormUrl = {result}, Payment form url");
+
+            return result;
         }
     }
 }
