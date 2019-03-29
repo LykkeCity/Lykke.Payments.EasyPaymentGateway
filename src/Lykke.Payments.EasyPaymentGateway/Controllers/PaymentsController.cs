@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Log;
+using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.Log;
 using Lykke.Contracts.Payments;
 using Lykke.Payments.Contracts;
@@ -8,19 +9,23 @@ using Lykke.Payments.EasyPaymentGateway.Domain.Services;
 using Lykke.Payments.EasyPaymentGateway.DomainServices;
 using Lykke.Payments.EasyPaymentGateway.Models;
 using Lykke.Payments.EasyPaymentGateway.Settings;
+using Lykke.Payments.EasyPaymentGateway.Workflow.Commands;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Lykke.Payments.EasyPaymentGateway.Sdk;
+using Lykke.Cqrs;
 
 namespace Lykke.Payments.EasyPaymentGateway.Controllers
 {
     [ApiController]
-    public class PaymentsController : Controller
+    public class PaymentsController : ControllerBase
     {
         private readonly PaymentUrlProvider _paymentUrlProvider;
         private readonly IPaymentSystemsRawLog _paymentSystemsRawLog;
         private readonly RedirectSettings _redirectSettings;
         private readonly EasyPaymentGatewaySettings _easyPaymentGatewaySettings;
+        private readonly ICqrsEngine _cqrsEngine;
         private readonly ILog _log; 
 
         public PaymentsController(
@@ -28,37 +33,22 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
             IPaymentSystemsRawLog paymentSystemsRawLog,
             RedirectSettings redirectSettings,
             EasyPaymentGatewaySettings easyPaymentGatewaySettings,
+            ICqrsEngine cqrsEngine,
             ILogFactory logFactory)
         {
             _paymentUrlProvider = paymentUrlProvider;
             _paymentSystemsRawLog = paymentSystemsRawLog;
             _redirectSettings = redirectSettings;
             _easyPaymentGatewaySettings = easyPaymentGatewaySettings;
+            _cqrsEngine = cqrsEngine;
             _log = logFactory.CreateLog(this);
         }
 
-        [HttpGet]
-        [HttpPost]
-        [Route("easypaymentgateway/ok")]
-        public async Task<ActionResult> Ok()
-        {
-            await _paymentSystemsRawLog.RegisterEventAsync(
-                PaymentSystemRawLogEvent.Create(CashInPaymentSystem.EasyPaymentGateway, "Ok page", Request.QueryString.ToString()));
-
-            return View();
-        }
-
-        [HttpGet]
-        [HttpPost]
-        [Route("easypaymentgateway/fail")]
-        public async Task<ActionResult> Fail()
-        {
-            await _paymentSystemsRawLog.RegisterEventAsync(
-                PaymentSystemRawLogEvent.Create(CashInPaymentSystem.EasyPaymentGateway, "Fail page", Request.QueryString.ToString()));
-
-            return View();
-        }
-
+        /// <summary>
+        /// Get payment form url
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("api/GetPaymentUrl")]
         public async Task<GetUrlDataResult> GetPaymentUrl([FromBody] GetUrlDataRequestModel request)
@@ -114,9 +104,55 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Get source client id
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/GetSourceClientId")]
         [Produces("text/plain")]
-        public Task<string> GetSourceClientId() => Task.FromResult(_easyPaymentGatewaySettings.SourceClientId);
+        public Task<string> GetSourceClientId()
+        {
+            return Task.FromResult(_easyPaymentGatewaySettings.SourceClientId);
+        }
+
+        /// <summary>
+        /// Callback for status update
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("api/Status")]
+        public async Task<IActionResult> PostStatus([FromBody] CallbackStatusModel model)
+        {
+            if (model == null)
+            {
+                await _log.WriteWarningAsync(
+                    nameof(PaymentsController.PostStatus), 
+                    string.Empty, 
+                    "Status update request is empty");
+
+                return BadRequest(ErrorResponse.Create("Request is empty"));
+            }
+
+            var request = model.ToJson();
+
+            await _paymentSystemsRawLog.RegisterEventAsync(PaymentSystemRawLogEvent.Create(
+                CashInPaymentSystem.EasyPaymentGateway, 
+                "Status update", 
+                request));
+
+            var command = new CashInCommand
+            {
+                OrderId = model.Operations.GetMerchantTransactionId(),
+                Request = request
+            };
+
+            _cqrsEngine.SendCommand(
+                command, 
+                _easyPaymentGatewaySettings.EasyPaymentGatewayContext, 
+                _easyPaymentGatewaySettings.EasyPaymentGatewayContext);
+
+            return Accepted();
+        }
     }
 }

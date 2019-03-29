@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -18,8 +18,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.Cqrs" Version="9.0.0" />
+    <PackageReference Include="Lykke.Messaging" Version="6.3.0" />
+    <PackageReference Include="Lykke.Messaging.RabbitMq" Version="2.2.0" />
     <PackageReference Include="Lykke.Payments.Contracts" Version="1.0.6" />
     <PackageReference Include="Lykke.Sdk" Version="5.11.0" />
+    <PackageReference Include="Lykke.Service.ClientAccount.Client" Version="3.1.0" />
+    <PackageReference Include="Lykke.Service.ExchangeOperations.Client" Version="2.0.5" />
+    <PackageReference Include="Lykke.Service.FeeCalculator.Client" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0" />
@@ -31,6 +37,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
+    <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Payments.EasyPaymentGateway.AzureRepositories\Lykke.Payments.EasyPaymentGateway.AzureRepositories.csproj" />

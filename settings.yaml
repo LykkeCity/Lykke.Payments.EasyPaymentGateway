@@ -4,6 +4,10 @@ EasyPaymentGatewayService:
             settings-key: EasyPaymentGatewayService-LogsConnString
             types:
               - AzureTableStorage
+        ClientPersonalInfoConnString:
+            settings-key: EasyPaymentGatewayService-ClientPersonalInfoConnString
+            types:
+             - AzureTableStorage
     Merchant:
         MerchantId:
             settings-key: EasyPaymentGatewayService-MerchantId
@@ -35,6 +39,16 @@ EasyPaymentGatewayService:
     SourceClientId:
         settings-key: EasyPaymentGatewayService-SourceClientId
         types: [Tag]
+    RabbitMq:
+        ConnectionString:
+            settings-key: EasyPaymentGatewayService-RabbitMqConnectionString
+            types: [Tag]
+    LegalEntityCode:
+        settings-key: EasyPaymentGatewayService-LegalEntityCode
+        types: [Tag]
+    Environment:
+        settings-key: EasyPaymentGatewayService-Environment
+        types: [Tag]
 SlackNotifications:
     AzureQueue:
         ConnectionString:
@@ -51,3 +65,18 @@ PersonalDataServiceClient:
         settings-key: PersonalDataApiKey
     ServiceUri:
         settings-key: PersonalDataServiceUrl
+ExchangeOperationsServiceClient:
+    ServiceUrl:
+        settings-key: ExchangeOperationsServiceUrl
+FeeCalculatorServiceClient:
+    ServiceUrl:
+        settings-key: FeeCalculatorServiceUrl
+    CacheExpirationPeriod:
+        settings-key: EasyPaymentGatewayService-FeeCalculatorCacheExpirationPeriod
+ClientAccountServiceClient:
+    ServiceUrl:
+        settings-key: ClientAccountServiceUrl
+FeeSettings:
+    TargetClientId:
+        BankCard:
+            settings-key: EasyPaymentGatewayService-Fee-BankCard

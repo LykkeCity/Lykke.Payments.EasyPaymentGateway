@@ -6,5 +6,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Settings
     {
         [AzureTableCheck]
         public string LogsConnString { get; set; }
+
+        [AzureTableCheck]
+        public string ClientPersonalInfoConnString { get; set; }
     }
 }

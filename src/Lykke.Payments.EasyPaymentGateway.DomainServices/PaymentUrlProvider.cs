@@ -81,7 +81,8 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
                 ProductId = _productId,
                 Language = Language,
                 Dob = otherInfo.DateOfBirth,
-                StatusURL = _webHookStatusUrl
+                StatusURL = _webHookStatusUrl,
+                PaymentSolution = "CreditCards"
             };
 
             var requestQueryString = requestPayload.BuildEncodedQueryString();
