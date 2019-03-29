@@ -43,9 +43,7 @@ EasyPaymentGatewayService:
         ConnectionString:
             settings-key: EasyPaymentGatewayService-RabbitMqConnectionString
             types: [Tag]
-    LegalEntityCode:
-        settings-key: EasyPaymentGatewayService-LegalEntityCode
-        types: [Tag]
+    LegalEntityCode: ""
     Environment:
         settings-key: EasyPaymentGatewayService-Environment
         types: [Tag]
