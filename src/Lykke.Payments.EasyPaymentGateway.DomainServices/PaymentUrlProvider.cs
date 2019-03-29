@@ -90,6 +90,8 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
                 PaymentSolution = "CreditCards"
             };
 
+            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), "EPG payment form request", requestPayload.ToJson());
+
             var requestQueryString = requestPayload.BuildEncodedQueryString();
 
             var encryptedQueryString = requestQueryString.Encrypt(_merchantPassword);
@@ -103,8 +105,6 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
                 MerchantId = _merchantId
             };
 
-            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), request.ToJson(), "EPG payment form request");
-
             var response = await _httpClient.PostAsync
                 ("/EPGCheckout/rest/online/tokenize",
                 new StringContent(request.BuildEncodedQueryString(), Encoding.UTF8, "application/x-www-form-urlencoded"));
@@ -113,7 +113,7 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
 
             var result = await response.Content.ReadAsStringAsync();
 
-            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), $"paymentFormUrl = {result}, Payment form url");
+            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), "Payment form url", result);
 
             return result;
         }
