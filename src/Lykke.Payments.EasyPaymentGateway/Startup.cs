@@ -41,6 +41,11 @@ namespace Lykke.Payments.EasyPaymentGateway
                     */
                 };
 
+                options.ConfigureMvcBuilder = (mvc) =>
+                {
+                    mvc.AddXmlSerializerFormatters();
+                };
+
                 options.Extend = (sc, settings) =>
                 {
                     sc.AddHttpClient("epg", client =>
