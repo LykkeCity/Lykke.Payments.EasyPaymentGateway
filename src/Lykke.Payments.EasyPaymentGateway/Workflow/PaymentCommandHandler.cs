@@ -1,4 +1,7 @@
-﻿using Lykke.Contracts.Payments;
+﻿using Common;
+using Common.Log;
+using Lykke.Common.Log;
+using Lykke.Contracts.Payments;
 using Lykke.Cqrs;
 using Lykke.Payments.EasyPaymentGateway.AzureRepositories;
 using Lykke.Payments.EasyPaymentGateway.Domain.Repositories;
@@ -15,17 +18,22 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
     {
         private readonly IPaymentTransactionsRepository _paymentTransactionsRepository;
         private readonly IPaymentTransactionEventsLog _paymentTransactionEventsLog;
+        private readonly ILog _log;
 
         public PaymentCommandHandler(
             IPaymentTransactionsRepository paymentTransactionsRepository,
-            IPaymentTransactionEventsLog paymentTransactionEventsLog)
+            IPaymentTransactionEventsLog paymentTransactionEventsLog,
+            ILogFactory logFactory)
         {
             _paymentTransactionsRepository = paymentTransactionsRepository;
             _paymentTransactionEventsLog = paymentTransactionEventsLog;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<CommandHandlingResult> Handle(CashInCommand command, IEventPublisher eventPublisher)
         {
+            _log.Info("Handling CashInCommand", command.ToJson());
+
             var request = JsonConvert.DeserializeObject<CallbackStatusModel>(command.Request);
 
             var transactionOperations = request?.Operations.Where(x => x.MerchantTransactionId == command.OrderId);

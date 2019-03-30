@@ -145,6 +145,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
 
             foreach (var trxId in transactions)
             {
+                _log.Info("Sending CashInCommand command", $"Transaction id = {trxId}");
+
                 var command = new CashInCommand
                 {
                     OrderId = trxId,

@@ -1,4 +1,7 @@
-﻿using Lykke.Cqrs;
+﻿using Common;
+using Common.Log;
+using Lykke.Common.Log;
+using Lykke.Cqrs;
 using Lykke.Payments.EasyPaymentGateway.AzureRepositories;
 using Lykke.Payments.EasyPaymentGateway.Domain.Repositories;
 using Lykke.Payments.EasyPaymentGateway.Settings;
@@ -19,23 +22,28 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
         private readonly IFeeCalculatorClient _feeCalculatorClient;
         private readonly FeeSettings _feeSettings;
         private readonly AntiFraudChecker _antiFraudChecker;
+        private readonly ILog _log;
 
         public MeCommandHandler(
             IExchangeOperationsServiceClient exchangeOperationsService,
             IPaymentTransactionEventsLog paymentTransactionEventsLog,
             IFeeCalculatorClient feeCalculatorClient,
             FeeSettings feeSettings,
-            AntiFraudChecker antiFraudChecker)
+            AntiFraudChecker antiFraudChecker,
+            ILogFactory logFactory)
         {
             _exchangeOperationsService = exchangeOperationsService;
             _paymentTransactionEventsLog = paymentTransactionEventsLog;
             _feeSettings = feeSettings;
             _antiFraudChecker = antiFraudChecker;
             _feeCalculatorClient = feeCalculatorClient;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<CommandHandlingResult> Handle(CreateTransferCommand createTransferCommand, IEventPublisher eventPublisher)
         {
+            _log.Info("Handling CreateTransferCommand", createTransferCommand.ToJson());
+
             if (await _antiFraudChecker.IsPaymentSuspicious(createTransferCommand.ClientId, createTransferCommand.OrderId))
             {
                 return new CommandHandlingResult { Retry = true, RetryDelay = (long)TimeSpan.FromMinutes(10).TotalMilliseconds };
