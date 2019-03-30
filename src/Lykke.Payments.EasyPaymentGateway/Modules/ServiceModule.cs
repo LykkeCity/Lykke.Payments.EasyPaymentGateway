@@ -6,8 +6,10 @@ using Lykke.Payments.EasyPaymentGateway.AzureRepositories;
 using Lykke.Payments.EasyPaymentGateway.Domain.Repositories;
 using Lykke.Payments.EasyPaymentGateway.Domain.Services;
 using Lykke.Payments.EasyPaymentGateway.DomainServices;
+using Lykke.Payments.EasyPaymentGateway.Services;
 using Lykke.Payments.EasyPaymentGateway.Settings;
 using Lykke.Payments.EasyPaymentGateway.Workflow;
+using Lykke.Sdk;
 using Lykke.Service.ClientAccount.Client;
 using Lykke.Service.ExchangeOperations.Client;
 using Lykke.Service.FeeCalculator.Client;
@@ -31,6 +33,10 @@ namespace Lykke.Payments.EasyPaymentGateway.Modules
             var appSettings = _appSettings.CurrentValue;
 
             var serviceSettings = appSettings.EasyPaymentGatewayService;
+
+            builder.RegisterType<StartupManager>()
+                .As<IStartupManager>()
+                .SingleInstance();
 
             builder.Register(ctx => new PersonalDataService(appSettings.PersonalDataServiceClient, ctx.Resolve<ILogFactory>()))
                 .As<IPersonalDataService>().SingleInstance();
