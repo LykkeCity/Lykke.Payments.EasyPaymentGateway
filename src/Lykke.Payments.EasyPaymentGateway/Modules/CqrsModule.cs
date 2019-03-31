@@ -6,6 +6,7 @@ using Lykke.Messaging;
 using Lykke.Messaging.Contract;
 using Lykke.Messaging.RabbitMq;
 using Lykke.Messaging.Serialization;
+using Lykke.Payments.EasyPaymentGateway.Client.Events;
 using Lykke.Payments.EasyPaymentGateway.Settings;
 using Lykke.Payments.EasyPaymentGateway.Workflow;
 using Lykke.Payments.EasyPaymentGateway.Workflow.Commands;
