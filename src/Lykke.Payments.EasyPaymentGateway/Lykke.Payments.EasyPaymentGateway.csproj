@@ -41,6 +41,7 @@
     <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Payments.EasyPaymentGateway.Client\Lykke.Payments.EasyPaymentGateway.Client.csproj" />
     <ProjectReference Include="..\Lykke.Payments.EasyPaymentGateway.AzureRepositories\Lykke.Payments.EasyPaymentGateway.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Payments.EasyPaymentGateway.Domain\Lykke.Payments.EasyPaymentGateway.Domain.csproj" />
     <ProjectReference Include="..\Lykke.Payments.EasyPaymentGateway.DomainServices\Lykke.Payments.EasyPaymentGateway.DomainServices.csproj" />

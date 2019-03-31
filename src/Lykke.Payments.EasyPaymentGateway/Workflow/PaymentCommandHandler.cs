@@ -4,6 +4,7 @@ using Lykke.Common.Log;
 using Lykke.Contracts.Payments;
 using Lykke.Cqrs;
 using Lykke.Payments.EasyPaymentGateway.AzureRepositories;
+using Lykke.Payments.EasyPaymentGateway.Client.Events;
 using Lykke.Payments.EasyPaymentGateway.Domain.Repositories;
 using Lykke.Payments.EasyPaymentGateway.Models;
 using Lykke.Payments.EasyPaymentGateway.Workflow.Commands;

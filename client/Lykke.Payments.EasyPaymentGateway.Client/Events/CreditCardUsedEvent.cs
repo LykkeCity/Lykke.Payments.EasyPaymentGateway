@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ProtoBuf;
 
-namespace Lykke.Payments.EasyPaymentGateway.Workflow.Events
+namespace Lykke.Payments.EasyPaymentGateway.Client.Events
 {
     [ProtoContract]
     public class CreditCardUsedEvent
