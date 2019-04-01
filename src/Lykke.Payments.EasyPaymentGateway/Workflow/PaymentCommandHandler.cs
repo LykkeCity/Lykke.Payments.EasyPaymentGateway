@@ -65,6 +65,25 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
                 }
             }
 
+            // taking action only on final statuses which are marked as Failed or Succeeded
+            if (transactionOperations.Any(x => x.Failed))
+            {
+                var statuses = transactionOperations.Select(x => x.Status).Distinct();
+
+                var errorMessages = transactionOperations.Where(x => x.Failed).Select(x => x.Message);
+
+                await _paymentTransactionsRepository.SetStatusAsync(command.OrderId, PaymentStatus.NotifyDeclined);
+
+                await _paymentTransactionEventsLog.WriteAsync(
+                    PaymentTransactionLogEvent.Create(
+                        command.OrderId, 
+                        command.Request, 
+                        $"Declined by Payment status from payment system, operation statuses = [{string.Join(',', statuses)}]. Error messages = {string.Join(',', errorMessages)}.", 
+                        nameof(CashInCommand)));
+
+                return CommandHandlingResult.Ok();
+            }
+
             if (transactionOperations.Any(x => x.Succeeded))
             {
                 var succeededOperations = transactionOperations.Where(x => x.Succeeded);
@@ -82,18 +101,9 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
 
                 return CommandHandlingResult.Ok();
             }
-            else
-            {
-                var statuses = transactionOperations.Select(x => x.Status).Distinct();
 
-                await _paymentTransactionsRepository.SetStatusAsync(command.OrderId, PaymentStatus.NotifyDeclined);
-
-                await _paymentTransactionEventsLog.WriteAsync(
-                    PaymentTransactionLogEvent.Create(
-                        command.OrderId, command.Request, $"Declined by Payment status from payment system, operation statuses = [{string.Join(',', statuses)}]", nameof(CashInCommand)));
-
-                return CommandHandlingResult.Ok();
-            }
+            // not final status, expecting more status updates coming
+            return CommandHandlingResult.Ok();
         }
 
         public async Task<CommandHandlingResult> Handle(CompleteTransferCommand cmd, IEventPublisher eventPublisher)
