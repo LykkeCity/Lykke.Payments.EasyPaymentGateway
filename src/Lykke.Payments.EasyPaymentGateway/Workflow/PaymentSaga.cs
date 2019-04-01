@@ -1,4 +1,6 @@
-﻿using Lykke.Cqrs;
+﻿using Common.Log;
+using Lykke.Common.Log;
+using Lykke.Cqrs;
 using Lykke.Payments.EasyPaymentGateway.Domain;
 using Lykke.Payments.EasyPaymentGateway.Domain.Repositories;
 using Lykke.Payments.EasyPaymentGateway.Settings;
@@ -13,17 +15,25 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
         private readonly IPaymentTransactionsRepository _paymentTransactionsRepository;
         private readonly IPaymentNotifier[] _paymentNotifiers;
         private readonly EasyPaymentGatewaySettings _easyPaymentGatewaySettings;
+        private readonly ILog _log;
 
-        public PaymentSaga(IPaymentTransactionsRepository paymentTransactionsRepository, IPaymentNotifier[] paymentNotifiers, EasyPaymentGatewaySettings easyPaymentGatewaySettings)
+        public PaymentSaga(
+            IPaymentTransactionsRepository paymentTransactionsRepository, 
+            IPaymentNotifier[] paymentNotifiers, 
+            EasyPaymentGatewaySettings easyPaymentGatewaySettings,
+            ILogFactory logFactory)
         {
             _paymentTransactionsRepository = paymentTransactionsRepository;
             _paymentNotifiers = paymentNotifiers;
             _easyPaymentGatewaySettings = easyPaymentGatewaySettings;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task Handle(ProcessingStartedEvent evt, ICommandSender commandSender)
         {
             var transaction = await _paymentTransactionsRepository.GetByTransactionIdAsync(evt.OrderId);
+
+            _log.Info(nameof(PaymentSaga.Handle), $"Antifraud status = {transaction.AntiFraudStatus} (txId = {evt.OrderId})");
 
             var transferCommand = new CreateTransferCommand
             {
