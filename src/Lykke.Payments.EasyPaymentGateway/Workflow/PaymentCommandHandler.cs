@@ -43,6 +43,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
 
             var tx = await _paymentTransactionsRepository.GetByTransactionIdAsync(command.OrderId);
 
+            _log.Info($"Antifraud status = {tx.AntiFraudStatus} (txId = {command.OrderId})");
+
             if (tx != null && (tx.Status == PaymentStatus.NotifyDeclined || tx.Status == PaymentStatus.NotifyProcessed || tx.Status == PaymentStatus.Processing))
             {
                 return CommandHandlingResult.Ok();
