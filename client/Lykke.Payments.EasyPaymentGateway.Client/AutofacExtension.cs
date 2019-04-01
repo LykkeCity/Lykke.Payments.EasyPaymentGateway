@@ -21,7 +21,7 @@ namespace Lykke.Payments.EasyPaymentGateway.Client
         public static void RegisterEasyPaymentGatewayClient(
             [NotNull] this ContainerBuilder builder,
             [NotNull] EasyPaymentGatewayServiceClientSettings settings,
-            [CanBeNull] Func<HttpClientGeneratorBuilder, HttpClientGeneratorBuilder> builderConfigure)
+            [CanBeNull] Func<HttpClientGeneratorBuilder, HttpClientGeneratorBuilder> builderConfigure = null)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
