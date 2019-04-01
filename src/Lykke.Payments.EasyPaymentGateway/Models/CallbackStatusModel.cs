@@ -84,6 +84,16 @@ namespace Lykke.Payments.EasyPaymentGateway.Models
                 return (statusValue == "SUCCESS" || statusValue == "VOIDED");
             }
         }
+
+        public bool Failed
+        {
+            get
+            {
+                var statusValue = Status?.ToUpper();
+
+                return (statusValue == "ERROR" || statusValue == "FAIL");
+            }
+        }
     }
 
     public class PaymentDetails
