@@ -15,6 +15,7 @@ using System;
 using System.Threading.Tasks;
 using Lykke.Cqrs;
 using System.Linq;
+using Lykke.Payments.EasyPaymentGateway.Workflow;
 
 namespace Lykke.Payments.EasyPaymentGateway.Controllers
 {
@@ -26,6 +27,7 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
         private readonly RedirectSettings _redirectSettings;
         private readonly EasyPaymentGatewaySettings _easyPaymentGatewaySettings;
         private readonly ICqrsEngine _cqrsEngine;
+        private readonly AntiFraudChecker _antiFraudChecker;
         private readonly ILog _log; 
 
         public PaymentsController(
@@ -34,6 +36,7 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
             RedirectSettings redirectSettings,
             EasyPaymentGatewaySettings easyPaymentGatewaySettings,
             ICqrsEngine cqrsEngine,
+            AntiFraudChecker antiFraudChecker,
             ILogFactory logFactory)
         {
             _paymentUrlProvider = paymentUrlProvider;
@@ -41,6 +44,7 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
             _redirectSettings = redirectSettings;
             _easyPaymentGatewaySettings = easyPaymentGatewaySettings;
             _cqrsEngine = cqrsEngine;
+            _antiFraudChecker = antiFraudChecker;
             _log = logFactory.CreateLog(this);
         }
 
@@ -160,6 +164,13 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
             }
 
             return Accepted();
+        }
+
+        [HttpGet]
+        [Route("api/IsClientSuspicious")]
+        public async Task<bool> IsClientSuspicious(string clientId)
+        {
+            return await _antiFraudChecker.IsClientSuspicious(clientId);
         }
     }
 }

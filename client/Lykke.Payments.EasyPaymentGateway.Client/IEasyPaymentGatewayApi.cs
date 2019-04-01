@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Refit;
+using System.Threading.Tasks;
 
 namespace Lykke.Payments.EasyPaymentGateway.Client
 {
@@ -12,5 +13,12 @@ namespace Lykke.Payments.EasyPaymentGateway.Client
     [PublicAPI]
     public interface IEasyPaymentGatewayApi
     {
+        /// <summary>
+        /// Checks if client suspicious
+        /// </summary>
+        /// <param name="clientId">Client ID</param>
+        /// <returns>IsClientSuspicious - true/false</returns>
+        [Get("/api/IsClientSuspicious")]
+        Task<bool> IsClientSuspicious(string clientId);
     }
 }
