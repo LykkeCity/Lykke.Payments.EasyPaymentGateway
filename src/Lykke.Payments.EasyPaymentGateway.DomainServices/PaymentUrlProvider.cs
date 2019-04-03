@@ -17,6 +17,9 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
         private readonly string _merchantPassword;
         private readonly string _productId;
         private readonly string _webHookStatusUrl;
+        private readonly string _successRedirectUrl;
+        private readonly string _failRedirectUrl;
+        private readonly string _cancelRedirectUrl;
         private readonly HttpClient _httpClient;
         private readonly ILog _log;
 
@@ -30,6 +33,9 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
             string merchantPassword,
             string productId,
             string webHookStatusUrl,
+            string successRedirectUrl,
+            string failRedirectUrl,
+            string cancelRedirectUrl,
             IHttpClientFactory httpClientFactory,
             ILogFactory logFactory)
         {
@@ -37,6 +43,9 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
             _merchantPassword = merchantPassword;
             _productId = productId;
             _webHookStatusUrl = webHookStatusUrl;
+            _successRedirectUrl = successRedirectUrl;
+            _failRedirectUrl = failRedirectUrl;
+            _cancelRedirectUrl = cancelRedirectUrl;
             _httpClient = httpClientFactory.CreateClient("epg");
             _log = logFactory.CreateLog(this);
         }
@@ -87,6 +96,9 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
                 Language = Language,
                 Dob = otherInfo.DateOfBirth,
                 StatusURL = _webHookStatusUrl,
+                SuccessURL = _successRedirectUrl,
+                ErrorURL = _failRedirectUrl,
+                CancelURL = _cancelRedirectUrl,
                 PaymentSolution = "CreditCards"
             };
 

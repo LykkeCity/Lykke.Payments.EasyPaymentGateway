@@ -57,6 +57,9 @@ namespace Lykke.Payments.EasyPaymentGateway.Modules
                 .WithParameter("merchantPassword", serviceSettings.Merchant.MerchantPassword)
                 .WithParameter("productId", serviceSettings.Merchant.ProductId)
                 .WithParameter("webHookStatusUrl", serviceSettings.WebHook.StatusUrl)
+                .WithParameter("successRedirectUrl", serviceSettings.Redirect.OkUrl)
+                .WithParameter("failRedirectUrl", serviceSettings.Redirect.ErrorUrl)
+                .WithParameter("cancelRedirectUrl", serviceSettings.Redirect.CancelUrl)
                 .AsSelf()
                 .SingleInstance();
 
