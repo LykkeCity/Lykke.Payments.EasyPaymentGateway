@@ -57,10 +57,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
         [Route("api/GetPaymentUrl")]
         public async Task<GetUrlDataResult> GetPaymentUrl([FromBody] GetUrlDataRequestModel request)
         {
-            await _log.WriteInfoAsync(nameof(PaymentsController.GetPaymentUrl), request.ToJson(), "Diagnostic logging");
-
-            _log.Warning("Test log", "Incoming request for payment form url");
-
             if (request == null)
                 return new GetUrlDataResult { ErrorMessage = "Invalid request data" };
 
@@ -130,11 +126,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
         {
             if (model == null)
             {
-                await _log.WriteWarningAsync(
-                    nameof(PaymentsController.PostStatus), 
-                    string.Empty, 
-                    "Status update request is empty");
-
                 return BadRequest(ErrorResponse.Create("Request is empty"));
             }
 
@@ -149,8 +140,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Controllers
 
             foreach (var trxId in transactions)
             {
-                _log.Info("Sending CashInCommand command", $"Transaction id = {trxId}");
-
                 var command = new CashInCommand
                 {
                     OrderId = trxId,

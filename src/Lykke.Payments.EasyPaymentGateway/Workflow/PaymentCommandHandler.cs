@@ -33,8 +33,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
 
         public async Task<CommandHandlingResult> Handle(CashInCommand command, IEventPublisher eventPublisher)
         {
-            _log.Info("Handling CashInCommand", command.ToJson());
-
             var request = JsonConvert.DeserializeObject<CallbackStatusModel>(command.Request);
 
             var transactionOperations = request?.Operations.Where(x => x.MerchantTransactionId == command.OrderId);
@@ -42,8 +40,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
             var operationPaymentDetails = transactionOperations.First().PaymentDetails;
 
             var tx = await _paymentTransactionsRepository.GetByTransactionIdAsync(command.OrderId);
-
-            _log.Info(nameof(PaymentCommandHandler.Handle), $"Antifraud status = {tx.AntiFraudStatus} (txId = {command.OrderId})");
 
             if (tx != null && (tx.Status == PaymentStatus.NotifyDeclined || tx.Status == PaymentStatus.NotifyProcessed || tx.Status == PaymentStatus.Processing))
             {

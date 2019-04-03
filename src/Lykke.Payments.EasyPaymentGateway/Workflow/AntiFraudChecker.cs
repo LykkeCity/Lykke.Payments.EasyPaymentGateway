@@ -42,8 +42,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
         {
             var transaction = await _paymentTransactionsRepository.GetByTransactionIdAsync(orderId);
 
-            _log.Info(nameof(AntiFraudChecker.IsPaymentSuspicious), $"Antifraud status = {transaction.AntiFraudStatus} (txId = {orderId}, cardHash = {transaction.CardHash})");
-
             if (transaction.AntiFraudStatus != null)
             {
                 if (transaction.AntiFraudStatus == AntiFraudStatus.Pending.ToString())
@@ -72,12 +70,8 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
             if (card == null)
                 throw new InvalidOperationException("Credit card is not found");
 
-            _log.Info(nameof(AntiFraudChecker.IsPaymentSuspicious), $"card = {card.CardNumber}, cardApproved? = {card.Approved.ToString()}");
-
             if (card.Approved) // FCT-2
                 return false;
-
-            _log.Info(nameof(AntiFraudChecker.IsPaymentSuspicious), $"Setting payment transaction as suspisious");
 
             await _paymentTransactionsRepository.SetAntiFraudStatusAsync(orderId,
                 AntiFraudStatus.Pending.ToString());

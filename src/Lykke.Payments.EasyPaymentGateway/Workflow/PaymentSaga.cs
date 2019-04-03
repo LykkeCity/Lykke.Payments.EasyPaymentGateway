@@ -33,8 +33,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
         {
             var transaction = await _paymentTransactionsRepository.GetByTransactionIdAsync(evt.OrderId);
 
-            _log.Info(nameof(PaymentSaga.Handle), $"Antifraud status = {transaction.AntiFraudStatus} (txId = {evt.OrderId})");
-
             var transferCommand = new CreateTransferCommand
             {
                 OrderId = evt.OrderId,
