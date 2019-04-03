@@ -42,8 +42,6 @@ namespace Lykke.Payments.EasyPaymentGateway.Workflow
 
         public async Task<CommandHandlingResult> Handle(CreateTransferCommand createTransferCommand, IEventPublisher eventPublisher)
         {
-            _log.Info("Handling CreateTransferCommand", createTransferCommand.ToJson());
-
             if (await _antiFraudChecker.IsPaymentSuspicious(createTransferCommand.ClientId, createTransferCommand.OrderId))
             {
                 return new CommandHandlingResult { Retry = true, RetryDelay = (long)TimeSpan.FromMinutes(10).TotalMilliseconds };

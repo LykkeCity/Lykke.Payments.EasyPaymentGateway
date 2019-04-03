@@ -125,8 +125,6 @@ namespace Lykke.Payments.EasyPaymentGateway.DomainServices
 
             var result = await response.Content.ReadAsStringAsync();
 
-            _log.Info(nameof(PaymentUrlProvider.GetPaymentUrlAsync), "Payment form url", result);
-
             return result;
         }
     }
